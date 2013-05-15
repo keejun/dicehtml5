@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="gb2312">
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<title>骰子</title>
+	<style type="text/css">
+	  div#main{
+	    margin-left:25%;
+		margin-top:5%;
+		margin-right:20%;
+		border-style:double;
+		height:300px;
+	  }
+	  #play{
+	      margin-left:112px;
+	     -webkit-box-shadow:6px 6px 4px gray;
+		 -moz-box-shadow:6px 6px 4px gray;
+		 
+	  }
+	 </style>
+	<script type="text/javascript">
+	  var dicex=50; //骰子的坐标
+	  var dicey=50;
+	  var dicewidth=120; //骰子的size
+	  var diceheight=100;
+	  var dotrad=6;
+	  var mainc;
+	  function init(){
+	    var ch=1+Math.floor(Math.random()*6); //根据此设置返回的范围数值
+	    setTimeout(play,100);
+	     function play(){
+		    tips();
+		   	$( "#play" ).effect("bounce",1500); //模拟骰子的效果
+		     setTimeout(playit,1500);
+	     }
+		 function playit(){
+		    drawplay(ch);
+	        drawnumber(ch);
+		 }
+	  }
+	  function tips(){
+	       mainc=document.getElementById("play").getContext('2d');
+		   mainc.lineWidth=2;
+	       mainc.clearRect(dicex,dicey,dicewidth,diceheight);
+	       mainc.fillStyle="gray";
+		   mainc.fillRect(dicex,dicey,dicewidth,diceheight);
+		   mainc.font=" 10px black Mircosoft Yahei ";
+		   mainc.fillText("模拟骰子",dicex+30,dicey-10);
+		  
+	  }
+    function drawplay(ch){
+	    mainc=document.getElementById("play").getContext('2d');
+		mainc.lineWidth=2;
+		mainc.clearRect(dicex,dicey,dicewidth,diceheight);
+		mainc.strokeRect(dicex+1,dicey+1,dicewidth+1,diceheight+1);
+		mainc.strokeStyle="#009966";
+		mainc.strokeRect(dicex,dicey,dicewidth,diceheight);
+		mainc.strokeStyle="lightgray";
+		
+		switch(ch){ //根据不同返回值进行canvas描绘
+		  case 1:
+		    draw1(); break;
+	      case 2 :
+		    draw2(); break;
+		  case 3 :
+		    draw2(); draw1();break;
+		  case 4:
+		    draw4(); break;
+		  case 5:
+		    draw4();draw1(); break;
+		  case 6:
+		    draw4();drawmid();break;
+		 }
+	   	 function draw1(){
+		   var dotx;
+		   var doty;
+		   mainc.beginPath();
+		   dotx=dicex+0.5*dicewidth;
+		   doty=dicey+0.5*diceheight;
+		   mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+		   mainc.closePath();
+		   mainc.fillStyle="orange";
+		   mainc.fill();
+		 }
+		function draw2(){
+		   var dotx;
+		   var doty;
+		   dotx=dicex+3*dotrad;
+		   doty=dicey+3*dotrad;
+		   mainc.beginPath();
+		   mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+		   dotx=dicex+dicewidth-3*dotrad;
+		   doty=dicey+diceheight-3*dotrad;
+		   mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+		   mainc.closePath();
+		   mainc.fillStyle="orange";
+		   mainc.fill();
+		}
+		function draw4(){
+		     var dotx;
+			 var doty;
+			 dotx=dicex+dicewidth-3*dotrad;//youshang
+			 doty=dicey+3*dotrad;   
+			 mainc.beginPath();
+			 mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+			 dotx=dicex+3*dotrad;
+			 doty=dicey+diceheight-3*dotrad;
+			 mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+			 mainc.closePath();
+			 mainc.fillStyle="orange";
+			 mainc.fill();
+			 draw2();
+		}
+		function drawmid(){
+		   var dotx;
+		   var doty;
+		   dotx=dicex+dicewidth-3*dotrad; ///youzhong
+		   doty=dicey+diceheight*0.5;
+		   mainc.beginPath();
+		   mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+		   dotx=dicex+3*dotrad;
+		   doty=dicey+diceheight*0.5;
+		   mainc.arc(dotx,doty,dotrad,0,Math.PI*2,true);
+		   mainc.closePath();
+		   mainc.fillStyle="orange";
+		   mainc.fill();
+		   draw4();
+		}
+	  }
+	  function drawnumber(ch){
+	    document.getElementById("number").innerHTML="<b>"+ch+"</b>";
+	  }
+	</script>
+</head>
+<body>
+	    <canvas id="play" style="width:500px;height:300px">  
+	     sorry,your brower canot support HTML5 canvas!<br/>
+		 对不起，您的浏览器不支持HTML5 canvas！
+	     </canvas>
+		 <span id="number"> </span>
+         <input type="submit" id="playit" value="骰子一下！" style="width:100px;height:40px;" onclick="init()"/>	 
+</body>
+</html>
