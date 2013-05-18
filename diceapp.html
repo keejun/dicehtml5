@@ -2,8 +2,8 @@
 <html lang="zh-cn">
 <head>
 	<meta http-equiv="Content-Type" content="text/html" charset="gb2312">
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<script src="js/jquery-ui.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<title>骰子</title>
 	<style type="text/css">
 	  div#main{
@@ -21,45 +21,105 @@
 	  }
 	 </style>
 	<script type="text/javascript">
-	  var dicex=50; //骰子的坐标
+	  var dicex=50; //骰子x,y
 	  var dicey=50;
-	  var dicewidth=120; //骰子的size
+	  var dicewidth=120; //骰子宽高
 	  var diceheight=100;
-	  var dotrad=6;
+	  var dotrad=6; //骰子内部圆点半径
 	  var mainc;
+	   ///开始小球的参数
+	  var ballrad=6;
+	  var ballright=dicex+dicewidth-ballrad;
+	  var ballleft=dicex+ballrad;
+	  var ballbottom=dicey+diceheight-ballrad;
+	  var balltop=dicey+ballrad;
+	  var ballx=dicex+6;
+	  var bally=dicey+6;
+	  var ballvx=10;
+	  var ballvy=14;
+	  var animate;
 	  function init(){
-	    var ch=1+Math.floor(Math.random()*6); //根据此设置返回的范围数值
-	    setTimeout(play,100);
+	    var ch=1+Math.floor(Math.random()*6); //得到点数
+	    setTimeout(play,100); //模拟抽取效果
 	     function play(){
-		    tips();
-		   	$( "#play" ).effect("bounce",1500); //模拟骰子的效果
-		     setTimeout(playit,1500);
+		    tips(); //画出字样
+		   	$( "#play" ).effect("bounce",1500);
+		     setTimeout(playit,2500);
+			 
 	     }
 		 function playit(){
-		    drawplay(ch);
-	        drawnumber(ch);
+		     clearInterval(animate); 
+		     drawplay(ch);//执行绘画
+	         drawnumber(ch); //显示点数
 		 }
 	  }
 	  function tips(){
 	       mainc=document.getElementById("play").getContext('2d');
-		   mainc.lineWidth=2;
+		   mainc.lineWidth=4;
 	       mainc.clearRect(dicex,dicey,dicewidth,diceheight);
-	       mainc.fillStyle="gray";
-		   mainc.fillRect(dicex,dicey,dicewidth,diceheight);
 		   mainc.font=" 10px black Mircosoft Yahei ";
 		   mainc.fillText("模拟骰子",dicex+30,dicey-10);
-		  
+		   moveball();
+		   animate=setInterval(moveball,100);  
+	  }
+	 function moveball(){
+	      mainc.clearRect(dicex,dicey,dicewidth,diceheight);
+		  movecheck();
+		  mainc.beginPath();
+		  mainc.arc(ballx,bally,ballrad,0,Math.PI*2,true);
+		  mainc.fillStyle="orange";
+		  mainc.fill(); 
+	} 
+	////小球进行运动函数
+	function movecheck(){
+	    var nballx=ballx+ballvx;
+		 var nbally=bally+ballvy;
+		 if(nballx>ballright){
+		    ballvx=-ballvx;
+			nballx=ballright;
+		 }
+		 if(nballx<ballleft){
+		    nballx=ballleft;
+			ballvx=-ballvx;
+		 }
+		 if(nbally>ballbottom){
+		    nbally=ballbottom;
+			ballvy=-ballvy;
+		 }
+		if(nbally<balltop){
+		    nbally=balltop;
+		    ballvy=-ballvy;
+		} 
+		    ballx=nballx;
+	    	bally=nbally;
 	  }
     function drawplay(ch){
 	    mainc=document.getElementById("play").getContext('2d');
-		mainc.lineWidth=2;
+		mainc.lineWidth=0.5;
 		mainc.clearRect(dicex,dicey,dicewidth,diceheight);
 		mainc.strokeRect(dicex+1,dicey+1,dicewidth+1,diceheight+1);
 		mainc.strokeStyle="#009966";
+		///画出3d效果，上面边框
+		mainc.beginPath();
+		mainc.moveTo(dicex,dicey);
+		mainc.lineTo(dicex+10,dicey-4);
+		mainc.moveTo(dicex+10,dicey-4);
+		mainc.lineTo(dicex+dicewidth+10,dicey-4);
+		mainc.moveTo(dicex+dicewidth+10,dicey-4);
+		mainc.lineTo(dicex+dicewidth,dicey);
+		mainc.moveTo(dicex+dicewidth,dicey);
+		           ///右边边框
+		mainc.lineTo(dicex+dicewidth+10,dicey-4);
+		mainc.moveTo(dicex+dicewidth+10,dicey-4);
+		mainc.lineTo(dicex+dicewidth+10,dicey+diceheight-4);
+		mainc.moveTo(dicex+dicewidth+10,dicey+diceheight-5);
+		mainc.lineTo(dicex+dicewidth,dicey+diceheight);
+		mainc.strokeStyle="#009966";
+		mainc.stroke();
+		mainc.closePath();
 		mainc.strokeRect(dicex,dicey,dicewidth,diceheight);
-		mainc.strokeStyle="lightgray";
-		
-		switch(ch){ //根据不同返回值进行canvas描绘
+		mainc.strokeStyle="white";
+		switch(ch){ //根据得到的不同数点进行不同的绘画
 		  case 1:
 		    draw1(); break;
 	      case 2 :
